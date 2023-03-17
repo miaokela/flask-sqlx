@@ -38,7 +38,7 @@
 ![code6](https://user-images.githubusercontent.com/30903265/225914843-26ca1e70-7474-4db5-a066-d454b228978f.png)
 
 - 逻辑删除
-
+> 目前对应的数据库字段是 delete_flag 根据自己的数据库设计的字段修改代码
 ![code113png](https://user-images.githubusercontent.com/30903265/225915023-5754e83d-2ec7-4d44-b486-13956bd990bd.png)
 
 #### 改
