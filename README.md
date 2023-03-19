@@ -5,6 +5,57 @@
 分离出项目中的SQL语句，避免insert/update/delete的SQL语句的重复编写，使用jinja2模板语法实现动态SQL，加入常见的分页、事务、多数据库操作
 ```
 
+## 模块安装使用
+```python
+from contextlib import contextmanager
+
+from lala_db_helper.db import DataBaseHelper
+from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
+from flask import Flask
+
+app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:12345678@127.0.0.1:3306/smart_lab"
+app.config["SQLALCHEMY_ECHO"] = True
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+
+class SQLAlchemy(_SQLAlchemy):
+    """
+    事务上下文管理器
+    """
+
+    @contextmanager
+    def trans(self):
+        try:
+            yield
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            raise e
+
+
+_instance = SQLAlchemy()
+
+_instance.init_app(app)
+
+DataBaseHelper.db = _instance
+
+
+with app.app_context():
+    rows = DataBaseHelper.select_all(
+        'detail.query_data',
+    )
+    print(rows)
+```
+
+# 依赖
+```
+pyyaml
+pymysql
+flask-sqlalchemy
+SQLAlchemy==1.4.47
+```
+
 ## 注意点
 
 ```
