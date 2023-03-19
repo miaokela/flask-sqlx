@@ -8,6 +8,20 @@ from sqlalchemy.sql import compiler, text
 from sql_loader import sql_loader
 
 
+class DBData(dict):
+    """
+    Set data or get data with point and bracket.
+    """
+    def __getattr__(self, key):
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(r"Query object has no attribute '%s'" % key)
+
+    def __setattr__(self, key, value):
+        self[key] = value
+
+
 class DataBaseHelper:
     db = None
 
@@ -177,13 +191,13 @@ class DataBaseHelper:
             return []
         # else:
         #     print("当前执行的sql: %s %s" % (preloaded_sql, str(params)))
-        return [dict(zip(item.keys(), item)) for item in result]
+        return [DBData(zip(item.keys(), item)) for item in result]
 
     @classmethod
     def select_one(cls, sql_id, params=None, options: typing.Dict[str, str] = None, app=None, bind=None):
         options = cls.get_params_without_paginated(options)  # 不需要分页
         result = cls.execute_sql(sql_id, params, options, app=app, bind=bind)
-        return result[0] if result else {}
+        return DBData(result[0] if result else {})
 
     @classmethod
     def select_all(cls, sql_id, params=None, options: typing.Dict[str, typing.Union[str, int, None]] = None, app=None, bind=None):
