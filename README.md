@@ -5,6 +5,7 @@
 ```
 
 ## 模块安装使用
+> pip3 install flask-sqlx. 
 
 <img width="569" alt="image" src="https://user-images.githubusercontent.com/30903265/226635551-f71b92e7-6692-4c77-9b9d-42b26fe6dc38.png">
 
