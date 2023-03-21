@@ -1,13 +1,27 @@
 import os
+import sys
 import threading
 import typing
 
 import yaml
 import jinja2
 
+from flask_sqlx.exceptions import (
+   SQLFileBasePathNotConfig,
+   SQLFileNotFound,
+   EmptySQLFile,
+   ErrorSQLIdPattern
+)
+
 
 class g:
     sql_dict = {}
+
+
+SQL_FILE_PATH = os.path.join(
+    sys.path[0],
+    "sql"
+)
 
 
 class SingletonType(type):
@@ -27,10 +41,9 @@ class SqlLoader(metaclass=SingletonType):
     """
 
     def __init__(self):
-        self.sql_file_path = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.realpath(__file__))),
-            'sql'
-        )
+        self.sql_file_path = SQL_FILE_PATH
+        if not self.sql_file_path:
+            raise SQLFileBasePathNotConfig 
         self.sql_data = SqlLoader.get_sql_data(self.sql_file_path)
 
     def get_sql(self, sql_id: str) -> str:
@@ -48,21 +61,21 @@ class SqlLoader(metaclass=SingletonType):
         sql_id_prefix = '.'.join(sql_id.split('.')[:-1])
         c_file = self.sql_data.get(sql_id_prefix)
         if not c_file:
-            raise Exception('sql file not found')
+            raise SQLFileNotFound('sql_id: %s not found' % sql_id)
         with open(c_file, 'r', encoding='utf-8') as f:
             content = f.read()
             sql_dict = yaml.load(content, Loader=yaml.FullLoader)
             if not sql_dict:
-                raise Exception('sql file is empty')
+                raise EmptySQLFile('sql file is empty')
             # 根据sql_id获取sql
             sql_keys = sql_id.split('.')
             if len(sql_keys) > 1:
                 sql_key = sql_keys[-1]
             else:
-                raise Exception('sql_id pattern error')
+                raise ErrorSQLIdPattern('sql_id pattern error')
             sql = sql_dict.get(sql_key)
             if not sql:
-                raise Exception('sql_id: %s not found' % sql_id)
+                raise SQLFileNotFound('sql_id: %s not found' % sql_id)
         return sql
 
     @staticmethod

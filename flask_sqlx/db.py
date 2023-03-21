@@ -4,8 +4,16 @@ import re
 import typing
 from sqlalchemy.sql.elements import TextClause
 from sqlalchemy.sql import compiler, text
+from sqlalchemy import text
 
-from sql_loader import sql_loader
+from flask_sqlx.exceptions import (
+    SQLFormatError,
+    SQLExecuteError
+)
+from flask_sqlx.sql_loader import sql_loader
+
+
+SHOW_SQL = False
 
 
 class DBData(dict):
@@ -60,7 +68,7 @@ class DataBaseHelper:
         
         for k, v in where.items():
             if k.startswith("_where_"):
-                raise Exception("where条件中不能包含 _where_ 开头的字段")
+                raise SQLFormatError("where条件中不能包含 _where_ 开头的字段")
             data.update(**{
                 "_where_%s" % k: v
             })
@@ -97,7 +105,7 @@ class DataBaseHelper:
             else:
                 result = cls.db.session.execute(text(sql), data)
             return result.rowcount
-        except Exception as e:
+        except SQLExecuteError as e:
             print("execute sql: < %s %s > failed! Readon: %s" % (sql, str(data), str(e)))
             return None
 
@@ -134,9 +142,7 @@ class DataBaseHelper:
             else:
                 result = cls.db.session.execute(text(sql), data)
             return result.lastrowid
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
+        except SQLExecuteError as e:
             print("execute sql: < %s %s > failed! Reason: %s" % (sql, str(data), str(e)))
             return None
 
@@ -161,7 +167,7 @@ class DataBaseHelper:
             else:
                 result = cls.db.session.execute(text(sql), where)
             return result.rowcount
-        except Exception as e:
+        except SQLExecuteError as e:
             print("执行sql: < %s %s > 失败！ 原因: %s" % (sql, str(where), str(e)))
             return None
 
@@ -181,16 +187,13 @@ class DataBaseHelper:
                 bind = cls.db.get_engine(app, bind=bind)
                 result = cls.db.session.execute(text(preloaded_sql), params, bind=bind).fetchall()
             else:
-                from sqlalchemy import text
                 # print('execute <%s>, params: %s' % (sql_id, str(params)))
                 result = cls.db.session.execute(text(preloaded_sql), params).fetchall()
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
+        except SQLExecuteError as e:
             print("执行sql: %s %s 失败！ 原因:%s" % (preloaded_sql, str(params), str(e)))
             return []
-        # else:
-        #     print("当前执行的sql: %s %s" % (preloaded_sql, str(params)))
+        if SHOW_SQL:
+            print("当前执行的sql: %s %s" % (preloaded_sql, str(params)))
         return [DBData(zip(item.keys(), item)) for item in result]
 
     @classmethod

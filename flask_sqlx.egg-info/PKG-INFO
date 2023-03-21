@@ -1,0 +1,20 @@
+Metadata-Version: 2.1
+Name: flask-sqlx
+Version: 0.0.2
+Summary: 旨在为写sql的程序拆分sql语句出程序中,分类管理。目前支持增删改查、分页、事务,以及flask项目中多数据库连接。
+Home-page: https://github.com/miaokela/db_helper
+Author: miaokela
+Author-email: 2972799448@qq.com
+Maintainer: miaokela
+Maintainer-email: 2972799448@qq.com
+Platform: all
+Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Operating System :: OS Independent
+Classifier: Intended Audience :: Developers
+Classifier: License :: Public Domain
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+
+访问Github查看使用:https://github.com/miaokela/db_helper/
