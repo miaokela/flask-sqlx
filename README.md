@@ -13,7 +13,7 @@
 from contextlib import contextmanager
 
 from flask_sqlx.sql_loader import SQL_FILE_PATH
-from flask_sqlx.db import DataBaseHelper
+from flask_sqlx.db import DataBaseHelper, DELETE_FLAG
 from flask_sqlalchemy import SQLAlchemy as _SQLAlchemy
 from flask import Flask
 
@@ -23,6 +23,8 @@ app.config["SQLALCHEMY_ECHO"] = True
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # SQL_FILE_PATH = '自定义sql文件位置，默认为当前执行目录下的sql文件夹'
+# DELETE_FLAG = 'delete_flag'  # 默认逻辑删除需要定义delete_flag字段，可修改
+
 
 class SQLAlchemy(_SQLAlchemy):
     """
