@@ -60,18 +60,6 @@ flask-sqlalchemy
 SQLAlchemy==1.4.47
 ```
 
-## 注意点
-
-```
-1. sql文件夹位置需要根据具体情况修改
-2. sql_loader导入需要根据具体项目目录来正确导入
-```
-
-![code](https://user-images.githubusercontent.com/30903265/225914280-d7ea7c77-47cf-4169-9dc3-8829c6e23af3.png)
-
-
-![code1](https://user-images.githubusercontent.com/30903265/225914308-d77e28a9-0675-4bec-83f7-4794cab50012.png)
-
 ## 配置事务
 
 ![code2](https://user-images.githubusercontent.com/30903265/225914444-6645fc00-4896-45d2-af0f-ad91062d588e.png)
