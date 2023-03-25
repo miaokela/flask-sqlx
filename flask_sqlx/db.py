@@ -14,6 +14,7 @@ from flask_sqlx.sql_loader import sql_loader
 
 
 SHOW_SQL = False
+DELETE_FLAG = "delete_flag"
 
 
 class DBData(dict):
@@ -156,7 +157,7 @@ class DataBaseHelper:
         """
         sql = "DELETE FROM " + tb_name
         if logic:
-            sql = "UPDATE %s SET delete_flag=1" % tb_name
+            sql = "UPDATE %s SET %s=1" % (tb_name, DELETE_FLAG)
         sql = cls.set_where_phrase(sql, where)
         where = cls.fullfilled_data({}, where)
 
